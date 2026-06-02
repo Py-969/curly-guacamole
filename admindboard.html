@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khairat Kematian Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#C9A227',
+              goldDark: '#8F6F14',
+              green: '#1F6F43',
+              greenDark: '#13492C',
+              cream: '#F7F3E8',
+              ink: '#102018'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px rgba(16, 32, 24, 0.12)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(201,162,39,0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(31,111,67,0.10), transparent 30%),
+        linear-gradient(180deg, #f7f3e8 0%, #eef4ee 100%);
+    }
+    .sidebar-transition {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Simple shimmer effect for loading states */
+    .shimmer {
+      background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased">
+  <div class="min-h-screen flex relative overflow-x-hidden">
+
+    <!-- Mobile Backdrop Overlay -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-brand-ink/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar-transition fixed inset-y-0 left-0 -translate-x-full lg:translate-x-0 w-72 flex flex-col bg-brand-green text-white shadow-soft z-50 lg:sticky lg:h-screen">
+      <div class="p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl bg-brand-gold flex items-center justify-center text-brand-greenDark font-bold text-xl">
+            K
+          </div>
+          <div>
+            <h1 class="text-lg font-semibold">Khairat Kematian</h1>
+            <p class="text-xs text-white/70">Admin Dashboard</p>
+          </div>
+        </div>
+        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl hover:bg-white/10 text-white/80 focus:outline-none" aria-label="Tutup Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="p-4 space-y-2 flex-1 overflow-y-auto">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white font-medium transition" href="#">Dashboard</a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white/85 transition" href="#">Ahli</a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white/85 transition" href="#">Sumbangan</a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white/85 transition" href="#">Pengurusan Kes</a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white/85 transition" href="#">Laporan</a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 text-white/85 transition" href="#">Tetapan</a>
+      </nav>
+
+      <div class="p-4 border-t border-white/10 bg-brand-greenDark/30">
+        <div class="rounded-2xl bg-white/10 p-4 border border-white/10">
+          <p class="text-sm text-white/80">Dana semasa</p>
+          <p id="sidebar-dana" class="text-2xl font-bold text-brand-gold">RM --</p>
+          <p id="sidebar-dana-trend" class="text-xs text-white/60 mt-1">--</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 min-w-0 flex flex-col">
+      <!-- Header -->
+      <header class="sticky top-0 z-30 backdrop-blur bg-white/75 border-b border-slate-200/70">
+        <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 focus:outline-none">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </button>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-brand-greenDark tracking-tight">Dashboard Utama</h2>
+              <p class="text-sm text-slate-500 hidden sm:block">Ringkasan operasi khairat kematian hari ini</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <button class="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-medium transition shadow-sm">
+              Cetak Laporan
+            </button>
+            <div id="user-avatar" class="w-11 h-11 rounded-full bg-brand-green text-white flex items-center justify-center font-semibold shrink-0 shadow-sm">
+              --
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1">
+        
+        <!-- KPI Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <!-- Total Members -->
+          <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-5">
+            <p class="text-sm font-medium text-slate-500">Jumlah Ahli</p>
+            <div class="flex items-end justify-between mt-3">
+              <h3 id="kpi-jumlah-ahli" class="text-3xl font-bold text-brand-greenDark">--</h3>
+              <span id="trend-jumlah-ahli" class="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-500">--</span>
+            </div>
+          </div>
+          <!-- Active Cases -->
+          <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-5">
+            <p class="text-sm font-medium text-slate-500">Kes Aktif</p>
+            <div class="flex items-end justify-between mt-3">
+              <h3 id="kpi-kes-aktif" class="text-3xl font-bold text-brand-greenDark">--</h3>
+              <span id="trend-kes-aktif" class="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-500">--</span>
+            </div>
+          </div>
+          <!-- Monthly Donations -->
+          <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-5">
+            <p class="text-sm font-medium text-slate-500">Sumbangan Bulan Ini</p>
+            <div class="flex items-end justify-between mt-3">
+              <h3 id="kpi-sumbangan" class="text-3xl font-bold text-brand-greenDark">RM --</h3>
+              <span id="trend-sumbangan" class="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-500">--</span>
+            </div>
+          </div>
+          <!-- Claims Paid -->
+          <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-5">
+            <p class="text-sm font-medium text-slate-500">Tuntutan Dibayar</p>
+            <div class="flex items-end justify-between mt-3">
+              <h3 id="kpi-tuntutan" class="text-3xl font-bold text-brand-greenDark">RM --</h3>
+              <span id="trend-tuntutan" class="text-xs px-2 py-1 rounded-full bg-slate-50 text-slate-500">--</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Content Grid -->
+        <section class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <!-- Activity Panel -->
+          <div class="xl:col-span-2 bg-white rounded-2xl shadow-soft border border-slate-100 p-6">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <h3 class="text-lg font-semibold text-brand-greenDark">Aktiviti Terkini</h3>
+                <p class="text-sm text-slate-500">Kemas kini pendaftaran, pembayaran, dan tuntutan</p>
+              </div>
+              <button class="text-sm font-medium text-brand-green hover:text-brand-greenDark transition">Lihat semua</button>
+            </div>
+            <!-- Dynamic Activity Container -->
+            <div id="activity-container" class="space-y-4">
+              <div class="h-20 shimmer rounded-xl w-full"></div>
+              <div class="h-20 shimmer rounded-xl w-full"></div>
+              <div class="h-20 shimmer rounded-xl w-full"></div>
+            </div>
+          </div>
+
+          <!-- Progress / Action Panels -->
+          <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-6">
+              <h3 class="text-lg font-semibold text-brand-greenDark">Status Kes</h3>
+              <div id="cases-progress-container" class="mt-5 space-y-4">
+                <!-- Selesai Progress Bar -->
+                <div>
+                  <div class="flex justify-between text-sm mb-1 font-medium">
+                    <span class="text-slate-600">Selesai</span><span id="pct-selesai" class="text-brand-greenDark">--%</span>
+                  </div>
+                  <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                    <div id="bar-selesai" class="h-full w-0 bg-brand-green rounded-full transition-all duration-500"></div>
+                  </div>
+                </div>
+                <!-- Dalam Proses Progress Bar -->
+                <div>
+                  <div class="flex justify-between text-sm mb-1 font-medium">
+                    <span class="text-slate-600">Dalam Proses</span><span id="pct-proses" class="text-brand-goldDark">--%</span>
+                  </div>
+                  <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                    <div id="bar-proses" class="h-full w-0 bg-brand-gold rounded-full transition-all duration-500"></div>
+                  </div>
+                </div>
+                <!-- Perlu Dokumen Progress Bar -->
+                <div>
+                  <div class="flex justify-between text-sm mb-1 font-medium">
+                    <span class="text-slate-600">Perlu Dokumen</span><span id="pct-dokumen" class="text-amber-700">--%</span>
+                  </div>
+                  <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                    <div id="bar-dokumen" class="h-full w-0 bg-amber-500 rounded-full transition-all duration-500"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-soft border border-slate-100 p-6">
+              <h3 class="text-lg font-semibold text-brand-greenDark">Tindakan Pantas</h3>
+              <div class="mt-4 grid grid-cols-2 gap-3">
+                <button class="rounded-xl bg-brand-green text-white py-3 px-2 text-sm font-medium hover:bg-brand-greenDark shadow-sm transition">Tambah Ahli</button>
+                <button class="rounded-xl bg-brand-gold text-white py-3 px-2 text-sm font-medium hover:bg-brand-goldDark shadow-sm transition">Buka Kes</button>
+                <button class="rounded-xl border border-slate-200 py-3 px-2 text-sm font-medium bg-white hover:bg-slate-50 shadow-xs transition text-slate-700">Rekod Bayaran</button>
+                <button class="rounded-xl border border-slate-200 py-3 px-2 text-sm font-medium bg-white hover:bg-slate-50 shadow-xs transition text-slate-700">Cetak Senarai</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Members Table Section -->
+        <section class="bg-white rounded-2xl shadow-soft border border-slate-100 p-6">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <h3 class="text-lg font-semibold text-brand-greenDark">Senarai Ahli Terkini</h3>
+              <p class="text-sm text-slate-500">Status keahlian dan bayaran terkini</p>
+            </div>
+            <button class="text-sm font-medium text-brand-green hover:text-brand-greenDark transition">Eksport CSV</button>
+          </div>
+
+          <div class="overflow-x-auto -mx-6 px-6">
+            <table class="min-w-full text-sm whitespace-nowrap">
+              <thead>
+                <tr class="text-left text-slate-500 border-b border-slate-100">
+                  <th class="py-3 pr-4 font-semibold">Nama</th>
+                  <th class="py-3 pr-4 font-semibold">No. Telefon</th>
+                  <th class="py-3 pr-4 font-semibold">Kawasan</th>
+                  <th class="py-3 pr-4 font-semibold">Status</th>
+                  <th class="py-3 pr-4 font-semibold">Bayaran</th>
+                </tr>
+              </thead>
+              <tbody id="members-table-body" class="divide-y divide-slate-100">
+                <!-- Skeleton Loading Rows -->
+                <tr><td colspan="5" class="py-4"><div class="h-6 shimmer rounded w-full"></div></td></tr>
+                <tr><td colspan="5" class="py-4"><div class="h-6 shimmer rounded w-full"></div></td></tr>
+                <tr><td colspan="5" class="py-4"><div class="h-6 shimmer rounded w-full"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Application Logic & Local API Integrations -->
+  <script>
+    // Configuration: Update port/URL to match your local runtime environment
+    const API_BASE_URL = 'http://localhost:3000/api';
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      }
+    }
+
+    // Main data orchestrator
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchDashboardSummary();
+      fetchRecentActivities();
+      fetchMembersList();
+    });
+
+    /**
+     * 1. Fetches KPIs, current fundings, and progress ratios
+     */
+    async function fetchDashboardSummary() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/dashboard-summary`);
+        if (!response.open && !response.ok) throw new Error('Network error fetching summary data.');
+        const data = await response.json();
+
+        // Target Global Details
+        document.getElementById('user-avatar').innerText = data.currentUserInitials || 'A';
+        document.getElementById('sidebar-dana').innerText = `RM ${Number(data.currentFund || 0).toLocaleString()}`;
+        document.getElementById('sidebar-dana-trend').innerText = data.currentFundTrend || '';
+
+        // Update Summary Cards
+        document.getElementById('kpi-jumlah-ahli').innerText = Number(data.totalMembers || 0).toLocaleString();
+        updateTrendBadge('trend-jumlah-ahli', data.trends?.totalMembers);
+
+        document.getElementById('kpi-kes-aktif').innerText = data.activeCases || 0;
+        updateTrendBadge('trend-kes-aktif', data.trends?.activeCases);
+
+        document.getElementById('kpi-sumbangan').innerText = `RM ${Number(data.monthlyDonations || 0).toLocaleString()}`;
+        updateTrendBadge('trend-sumbangan', data.trends?.monthlyDonations);
+
+        document.getElementById('kpi-tuntutan').innerText = `RM ${Number(data.claimsPaid || 0).toLocaleString()}`;
+        updateTrendBadge('trend-tuntutan', data.trends?.claimsPaid);
+
+        // Render Cases Status Bars
+        animateProgressBar('selesai', data.caseStatusPercentages?.completed || 0);
+        animateProgressBar('proses', data.caseStatusPercentages?.inProgress || 0);
+        animateProgressBar('dokumen', data.caseStatusPercentages?.needsDocuments || 0);
+
+      } catch (error) {
+        console.error('Error handling backend data summary lookup:', error);
+        setKpiErrorStates();
+      }
+    }
+
+    /**
+     * 2. Fetches and parses activity streams
+     */
+    async function fetchRecentActivities() {
+      const container = document.getElementById('activity-container');
+      try {
+        const response = await fetch(`${API_BASE_URL}/activities`);
+        if (!response.ok) throw new Error('Failed to retrieve server activities logs.');
+        const activities = await response.json();
+
+        if (activities.length === 0) {
+          container.innerHTML = `<p class="text-sm text-slate-400 py-4 text-center">Tiada rekod aktiviti ditemui</p>`;
+          return;
+        }
+
+        container.innerHTML = activities.map(act => {
+          let badgeBg = 'bg-slate-50';
+          if (act.type === 'payment') badgeBg = 'bg-brand-cream/70';
+          if (act.type === 'case') badgeBg = 'bg-emerald-50/70';
+
+          let initialBg = 'bg-brand-gold';
+          if (act.type === 'case') initialBg = 'bg-brand-green';
+          if (act.type === 'system' || act.type === 'new_member') initialBg = 'bg-brand-goldDark';
+
+          return `
+            <div class="flex items-start gap-4 p-4 rounded-xl ${badgeBg}">
+              <div class="w-10 h-10 rounded-full ${initialBg} text-white flex items-center justify-center font-bold shrink-0">
+                ${(act.title || 'A').charAt(0).toUpperCase()}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-sm sm:text-base">${escapeHtml(act.title)}</p>
+                <p class="text-sm text-slate-500 truncate">${escapeHtml(act.description)}</p>
+              </div>
+              <span class="text-xs text-slate-400 whitespace-nowrap">${escapeHtml(act.timeOffset)}</span>
+            </div>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error loading activity logs:', error);
+        container.innerHTML = `<p class="text-sm text-rose-600 font-medium py-4 text-center">Gagal memuatkan log aktiviti terkini.</p>`;
+      }
+    }
+
+    /**
+     * 3. Fetches and binds continuous membership roster
+     */
+    async function fetchMembersList() {
+      const tbody = document.getElementById('members-table-body');
+      try {
+        const response = await fetch(`${API_BASE_URL}/members`);
+        if (!response.ok) throw new Error('Data collection mismatch via /api/members.');
+        const members = await response.json();
+
+        if (members.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Tiada senarai ahli berdaftar buat masa ini.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = members.map(member => {
+          const isAktif = member.status?.toLowerCase() === 'aktif';
+          const statusClass = isAktif ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700';
+          const paymentClass = member.paymentStatus?.toLowerCase() === 'lunas' ? 'text-emerald-600' : 'text-amber-600';
+
+          return `
+            <tr class="hover:bg-slate-50/50 transition">
+              <td class="py-4 pr-4 font-medium text-slate-900">${escapeHtml(member.name)}</td>
+              <td class="py-4 pr-4 text-slate-600">${escapeHtml(member.phone)}</td>
+              <td class="py-4 pr-4 text-slate-600">${escapeHtml(member.location)}</td>
+              <td class="py-4 pr-4">
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium ${statusClass}">
+                  ${escapeHtml(member.status)}
+                </span>
+              </td>
+              <td class="py-4 pr-4 ${paymentClass} font-medium">${escapeHtml(member.paymentStatus)}</td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error handling parsing components across rows:', error);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-8 text-center text-rose-600 font-medium">
+              Ralat penyambungan rangkaian dikesan. Gagal menyemak rekod senarai ahli.
+            </td>
+          </tr>`;
+      }
+    }
+
+    // Helper: Safely updates semantic text variations dynamically
+    function updateTrendBadge(elementId, trendObj) {
+      const badge = document.getElementById(elementId);
+      if (!trendObj) return;
+      badge.innerText = trendObj.text || '';
+      badge.className = `text-xs px-2 py-1 rounded-full font-medium ${trendObj.className || 'bg-slate-100 text-slate-700'}`;
+    }
+
+    // Helper: Dynamic adjustment parameters for metrics sliders
+    function animateProgressBar(idSuffix, targetValue) {
+      document.getElementById(`pct-${idSuffix}`).innerText = `${targetValue}%`;
+      setTimeout(() => {
+        document.getElementById(`bar-${idSuffix}`).style.width = `${targetValue}%`;
+      }, 150);
+    }
+
+    // Helper: Strict fallback values mapping on load issues
+    function setKpiErrorStates() {
+      ['jumlah-ahli', 'kes-aktif', 'sumbangan', 'tuntutan'].forEach(kpi => {
+        document.getElementById(`kpi-${kpi}`).innerText = 'Err';
+      });
+    }
+
+    // Helper: Simple script string escape encoder
+    function escapeHtml(str) {
+      if(!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
